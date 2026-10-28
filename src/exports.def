@@ -1,0 +1,25 @@
+LIBRARY openvr_api
+EXPORTS
+ LiquidVR=openvr_api_ftp_original.LiquidVR @1
+ VRCompositorSystemInternal=openvr_api_ftp_original.VRCompositorSystemInternal @2
+ VRControlPanel=openvr_api_ftp_original.VRControlPanel @3
+ VRHeadsetView=openvr_api_ftp_original.VRHeadsetView @4
+ VROculusDirect=openvr_api_ftp_original.VROculusDirect @5
+ VRPaths=openvr_api_ftp_original.VRPaths @6
+ VRRenderModelsInternal=openvr_api_ftp_original.VRRenderModelsInternal @7
+ VRSceneGraph=openvr_api_ftp_original.VRSceneGraph @8
+ VRTrackedCameraInternal=openvr_api_ftp_original.VRTrackedCameraInternal @9
+ VRVirtualDisplay=openvr_api_ftp_original.VRVirtualDisplay @10
+ VR_GetGenericInterface @11
+ VR_GetInitToken=openvr_api_ftp_original.VR_GetInitToken @12
+ VR_GetRuntimePath=openvr_api_ftp_original.VR_GetRuntimePath @13
+ VR_GetStringForHmdError=openvr_api_ftp_original.VR_GetStringForHmdError @14
+ VR_GetVRInitErrorAsEnglishDescription=openvr_api_ftp_original.VR_GetVRInitErrorAsEnglishDescription @15
+ VR_GetVRInitErrorAsSymbol=openvr_api_ftp_original.VR_GetVRInitErrorAsSymbol @16
+ VR_InitInternal @17
+ VR_InitInternal2 @18
+ VR_IsHmdPresent=openvr_api_ftp_original.VR_IsHmdPresent @19
+ VR_IsInterfaceVersionValid=openvr_api_ftp_original.VR_IsInterfaceVersionValid @20
+ VR_IsRuntimeInstalled=openvr_api_ftp_original.VR_IsRuntimeInstalled @21
+ VR_RuntimePath=openvr_api_ftp_original.VR_RuntimePath @22
+ VR_ShutdownInternal @23

@@ -1,0 +1,25 @@
+LIBRARY openvr_api_ftp_original
+EXPORTS
+ LiquidVR=Dummy @1
+ VRCompositorSystemInternal=Dummy @2
+ VRControlPanel=Dummy @3
+ VRHeadsetView=Dummy @4
+ VROculusDirect=Dummy @5
+ VRPaths=Dummy @6
+ VRRenderModelsInternal=Dummy @7
+ VRSceneGraph=Dummy @8
+ VRTrackedCameraInternal=Dummy @9
+ VRVirtualDisplay=Dummy @10
+ VR_GetGenericInterface @11
+ VR_GetInitToken @12
+ VR_GetRuntimePath=Dummy @13
+ VR_GetStringForHmdError=FixtureString @14
+ VR_GetVRInitErrorAsEnglishDescription=FixtureString @15
+ VR_GetVRInitErrorAsSymbol=FixtureString @16
+ VR_InitInternal @17
+ VR_InitInternal2 @18
+ VR_IsHmdPresent=Dummy @19
+ VR_IsInterfaceVersionValid=Dummy @20
+ VR_IsRuntimeInstalled=Dummy @21
+ VR_RuntimePath=Dummy @22
+ VR_ShutdownInternal @23

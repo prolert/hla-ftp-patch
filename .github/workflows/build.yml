@@ -1,0 +1,87 @@
+name: Windows build and package
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure x64
+        run: cmake -S . -B build -A x64
+      - name: Build Release
+        run: cmake --build build --config Release
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
+      - name: Package
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $stage = Join-Path $env:RUNNER_TEMP 'hla-ftp-package'
+          New-Item -ItemType Directory -Path (Join-Path $stage 'docs') -Force | Out-Null
+          Copy-Item -LiteralPath 'build/Release/openvr_api.dll','build/Release/ftp_check.exe','README.md','LICENSE','CHANGELOG.md','CONTRIBUTING.md' -Destination $stage
+          Copy-Item -Path 'scripts/*.bat','scripts/*.ps1' -Destination $stage
+          Copy-Item -LiteralPath 'docs/HOW_IT_WORKS.md','docs/RESEARCH_VERIFICATION.md','docs/TESTING.md' -Destination (Join-Path $stage 'docs')
+          $specs = Join-Path $stage 'docs/superpowers/specs'
+          New-Item -ItemType Directory -Path $specs -Force | Out-Null
+          Copy-Item -LiteralPath 'docs/superpowers/specs/2026-10-28-hla-ftp-patch-design.md' -Destination $specs
+          $media = Join-Path $stage 'docs/media'
+          New-Item -ItemType Directory -Path $media -Force | Out-Null
+          Copy-Item -LiteralPath 'docs/media/ftp.gif' -Destination $media
+          New-Item -ItemType Directory -Path 'dist' -Force | Out-Null
+          Compress-Archive -Path (Join-Path $stage '*') -DestinationPath 'dist/hla-ftp-patch-windows-x64.zip' -Force
+          git archive --format=zip --output=dist/hla-ftp-patch-source.zip HEAD
+          if ($LASTEXITCODE -ne 0) { throw 'Source archive failed' }
+      - name: Upload build ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: hla-ftp-patch
+          path: |
+            dist/hla-ftp-patch-windows-x64.zip
+            dist/hla-ftp-patch-source.zip
+          if-no-files-found: error
+
+  release:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: hla-ftp-patch
+          path: dist
+      - name: Publish tagged release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Half-Life Alyx FTP Patch ${{ github.ref_name }}
+          files: |
+            dist/hla-ftp-patch-windows-x64.zip
+            dist/hla-ftp-patch-source.zip
+          fail_on_unmatched_files: true
+          generate_release_notes: true
+          body: |
+            ### Installation
+            1. Download hla-ftp-patch-windows-x64.zip.
+            2. Extract it into a separate folder.
+            3. Close Alyx and run install.bat.
+            4. Start SteamVR and Alyx.
+
+            In Alyx's SteamVR controller bindings, under Move, assign Jump to Grip as Button.
+            Set Click Activation Threshold to 50 and Click Deactivation Threshold to 100.
+            Save the binding and hold the assigned button in-game.
+
+            P.S. Hold Grip between 50% and just under 100%; squeezing fully to 100% stops repetition.
+            To uninstall, close Alyx and run uninstall.bat.
+
+            Experimental: user-confirmed in-game FTP on one setup; see docs/TESTING.md for scope and remaining checks.
+            Original Valve binaries are not included. Full instructions: README.md.
